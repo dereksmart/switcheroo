@@ -1,0 +1,26 @@
+#!/bin/bash
+# Writes stdin to /etc/hosts atomically, then flushes DNS.
+# Invoked via: sudo -n /usr/local/bin/facade-save < new-hosts.txt
+# This script must be owned by root:wheel with mode 755 so only root
+# can modify it — otherwise the sudoers NOPASSWD entry becomes a
+# trivial local root exploit.
+set -euo pipefail
+
+tmp=$(mktemp /etc/hosts.facade.XXXXXX)
+trap 'rm -f "$tmp"' EXIT
+cat > "$tmp"
+chmod 644 "$tmp"
+chown root:wheel "$tmp"
+
+# Sanity check: refuse to install an empty/blank file. /etc/hosts always
+# needs at least the localhost entry for macOS to work correctly.
+if ! grep -q '[^[:space:]]' "$tmp"; then
+  echo "facade-save: refusing to write empty /etc/hosts" >&2
+  exit 2
+fi
+
+mv "$tmp" /etc/hosts
+
+dscacheutil -flushcache || true
+killall mDNSResponder || true
+killall mDNSResponderHelper 2>/dev/null || true

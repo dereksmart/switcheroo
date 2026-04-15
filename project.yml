@@ -1,0 +1,56 @@
+name: Facade
+options:
+  bundleIdPrefix: local.facade
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+targets:
+  Facade:
+    type: application
+    platform: macOS
+    sources:
+      - path: Facade
+    info:
+      path: Facade/Info.plist
+      properties:
+        LSUIElement: true
+        CFBundleName: Facade
+        CFBundleDisplayName: Facade
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSHumanReadableCopyright: ""
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: local.facade.Facade
+        MARKETING_VERSION: "0.1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        MACOSX_DEPLOYMENT_TARGET: "14.0"
+        SWIFT_VERSION: "5.9"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+        ENABLE_HARDENED_RUNTIME: NO
+        DEVELOPMENT_TEAM: ""
+    postBuildScripts:
+      - name: Install to /Applications (Release only)
+        basedOnDependencyAnalysis: false
+        script: |
+          if [ "${CONFIGURATION}" = "Release" ]; then
+            rm -rf /Applications/Facade.app
+            cp -R "${BUILT_PRODUCTS_DIR}/Facade.app" /Applications/Facade.app
+            echo "Installed /Applications/Facade.app"
+          fi
+schemes:
+  Facade:
+    build:
+      targets:
+        Facade: all
+    run:
+      config: Release
+    test:
+      config: Release
+    profile:
+      config: Release
+    analyze:
+      config: Release
+    archive:
+      config: Release
