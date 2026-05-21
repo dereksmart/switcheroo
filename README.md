@@ -53,8 +53,6 @@ Example: if you're behind an SSH-tunnel proxy app that doesn't pick up `/etc/hos
 osascript -e 'tell application "MyProxyApp" to quit'; for i in $(seq 1 50); do pgrep -x MyProxyApp >/dev/null 2>&1 || break; sleep 0.1; done; open -a MyProxyApp
 ```
 
-The loop polls every 100ms for up to 5s so the relaunch waits for the old process to actually exit (otherwise `open` just activates the still-quitting instance and the app ends up not running).
-
 ## License
 
 GPL-3.0.
