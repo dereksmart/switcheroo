@@ -2,19 +2,19 @@ import SwiftUI
 import AppKit
 
 @main
-struct FacadeApp: App {
+struct SwitcherooApp: App {
     init() {
         Self.terminateOtherInstances()
     }
 
     var body: some Scene {
-        MenuBarExtra("Facade", systemImage: "network") {
+        MenuBarExtra("Switcheroo", systemImage: "network") {
             HostsEditorView()
         }
         .menuBarExtraStyle(.window)
     }
 
-    /// Kill any previously-running Facade processes so there's only ever one
+    /// Kill any previously-running Switcheroo processes so there's only ever one
     /// menu-bar icon. Xcode launches from DerivedData bypass LaunchServices'
     /// normal single-instancing, so we enforce it manually.
     private static func terminateOtherInstances() {

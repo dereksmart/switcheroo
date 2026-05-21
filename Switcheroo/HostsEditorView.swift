@@ -5,6 +5,7 @@ struct HostsEditorView: View {
     @State private var savedText: String = ""
     @State private var status: Status = .idle
     @State private var errorMessage: String?
+    @State private var showingSettings = false
 
     enum Status: Equatable { case idle, loading, saving, saved }
 
@@ -32,6 +33,15 @@ struct HostsEditorView: View {
                 .foregroundStyle(.secondary)
             Spacer()
             statusView
+            Button {
+                showingSettings = true
+            } label: {
+                Image(systemName: "gearshape")
+            }
+            .buttonStyle(.borderless)
+            .popover(isPresented: $showingSettings, arrowEdge: .top) {
+                SettingsView()
+            }
         }
         .padding(.horizontal, 12)
         .padding(.top, 10)
@@ -119,6 +129,33 @@ struct HostsEditorView: View {
                 }
             }
         }
+    }
+}
+
+private struct SettingsView: View {
+    @State private var postSaveCommand: String = Settings.postSaveCommand ?? ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Post-save command")
+                .font(.headline)
+            Text("Shell command to run after every successful save. Useful for nudging a proxy or other long-lived app to re-resolve DNS.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            TextField("e.g. osascript -e 'tell application \"AutoProxxy\" to quit' && sleep 0.3 && open -a AutoProxxy", text: $postSaveCommand, axis: .vertical)
+                .textFieldStyle(.roundedBorder)
+                .font(.system(.body, design: .monospaced))
+                .lineLimit(2...4)
+                .onChange(of: postSaveCommand) { _, newValue in
+                    Settings.postSaveCommand = newValue
+                }
+            Text("Runs via /bin/sh -c. Leave blank to disable.")
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+        }
+        .padding(14)
+        .frame(width: 380)
     }
 }
 

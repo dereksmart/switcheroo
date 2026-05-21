@@ -25,7 +25,7 @@ enum HostsFile {
         }
     }
 
-    private static let helperPath = "/usr/local/bin/facade-save"
+    private static let helperPath = "/usr/local/bin/switcheroo-save"
 
     /// Writes `contents` to /etc/hosts and flushes DNS. If the passwordless
     /// helper (scripts/install-privileged.sh) is installed, uses that and
@@ -35,12 +35,27 @@ enum HostsFile {
         if FileManager.default.isExecutableFile(atPath: helperPath) {
             do {
                 try await writeViaHelper(contents)
+                await runPostSaveCommand()
                 return
             } catch HostsFileError.writeFailed(let msg) where msg.contains("password is required") || msg.contains("sudo: a") {
                 // Helper exists but sudoers isn't set up — fall through to prompt.
             }
         }
         try await writeViaOsascript(contents)
+        await runPostSaveCommand()
+    }
+
+    private static func runPostSaveCommand() async {
+        guard let cmd = Settings.postSaveCommand else { return }
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/sh")
+        process.arguments = ["-c", cmd]
+        process.standardOutput = Pipe()
+        process.standardError = Pipe()
+        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+            process.terminationHandler = { _ in cont.resume() }
+            do { try process.run() } catch { cont.resume() }
+        }
     }
 
     private static func writeViaHelper(_ contents: String) async throws {
@@ -82,7 +97,7 @@ enum HostsFile {
 
     private static func writeViaOsascript(_ contents: String) async throws {
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent("facade-hosts-\(UUID().uuidString)")
+            .appendingPathComponent("switcheroo-hosts-\(UUID().uuidString)")
         do {
             try contents.write(to: tmp, atomically: true, encoding: .utf8)
         } catch {

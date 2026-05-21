@@ -5,6 +5,6 @@ DerivedData/
 *.xcworkspace
 xcuserdata/
 *.xcuserstate
-Facade/Info.plist
+Switcheroo/Info.plist
 hosts-backup.txt
 

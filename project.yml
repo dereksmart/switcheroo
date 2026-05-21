@@ -1,27 +1,27 @@
-name: Facade
+name: Switcheroo
 options:
-  bundleIdPrefix: local.facade
+  bundleIdPrefix: local.switcheroo
   deploymentTarget:
     macOS: "14.0"
   createIntermediateGroups: true
 targets:
-  Facade:
+  Switcheroo:
     type: application
     platform: macOS
     sources:
-      - path: Facade
+      - path: Switcheroo
     info:
-      path: Facade/Info.plist
+      path: Switcheroo/Info.plist
       properties:
         LSUIElement: true
-        CFBundleName: Facade
-        CFBundleDisplayName: Facade
+        CFBundleName: Switcheroo
+        CFBundleDisplayName: Switcheroo
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSHumanReadableCopyright: ""
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: local.facade.Facade
+        PRODUCT_BUNDLE_IDENTIFIER: local.switcheroo.Switcheroo
         MARKETING_VERSION: "0.1.0"
         CURRENT_PROJECT_VERSION: "1"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
@@ -35,15 +35,15 @@ targets:
         basedOnDependencyAnalysis: false
         script: |
           if [ "${CONFIGURATION}" = "Release" ]; then
-            rm -rf /Applications/Facade.app
-            cp -R "${BUILT_PRODUCTS_DIR}/Facade.app" /Applications/Facade.app
-            echo "Installed /Applications/Facade.app"
+            rm -rf /Applications/Switcheroo.app
+            cp -R "${BUILT_PRODUCTS_DIR}/Switcheroo.app" /Applications/Switcheroo.app
+            echo "Installed /Applications/Switcheroo.app"
           fi
 schemes:
-  Facade:
+  Switcheroo:
     build:
       targets:
-        Facade: all
+        Switcheroo: all
     run:
       config: Release
     test:

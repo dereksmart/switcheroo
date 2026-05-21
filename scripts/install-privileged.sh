@@ -1,15 +1,15 @@
 #!/bin/bash
-# One-time setup: installs the facade-save helper to /usr/local/bin
+# One-time setup: installs the switcheroo-save helper to /usr/local/bin
 # and grants the current user passwordless sudo rights to run it.
-# Prompts for your password once, then Facade never prompts again.
+# Prompts for your password once, then Switcheroo never prompts again.
 set -euo pipefail
 
 cd "$(dirname "$0")"
 
 USER_NAME=$(id -un)
-HELPER_SRC="facade-save"
-HELPER_DST="/usr/local/bin/facade-save"
-SUDOERS_DST="/etc/sudoers.d/facade"
+HELPER_SRC="switcheroo-save"
+HELPER_DST="/usr/local/bin/switcheroo-save"
+SUDOERS_DST="/etc/sudoers.d/switcheroo"
 
 if [[ ! -f "$HELPER_SRC" ]]; then
   echo "error: $HELPER_SRC not found next to this script" >&2
@@ -29,5 +29,5 @@ sudo visudo -cf "$TMP_SUDO"
 sudo install -o root -g wheel -m 440 "$TMP_SUDO" "$SUDOERS_DST"
 
 echo
-echo "Done. Facade can now save without prompting."
-echo "(Test by saving a change in Facade — no password prompt should appear.)"
+echo "Done. Switcheroo can now save without prompting."
+echo "(Test by saving a change in Switcheroo — no password prompt should appear.)"
