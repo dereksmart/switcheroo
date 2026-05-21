@@ -55,14 +55,6 @@ osascript -e 'tell application "MyProxyApp" to quit'; for i in $(seq 1 50); do p
 
 The loop polls every 100ms for up to 5s so the relaunch waits for the old process to actually exit (otherwise `open` just activates the still-quitting instance and the app ends up not running).
 
-### When the flush won't help
-
-`/etc/hosts` only matters if your machine is the one doing DNS resolution. Some things bypass it entirely:
-
-- **System-wide HTTP/SOCKS proxies** (e.g. AutoProxy, Charles, corporate PAC files) — the proxy server resolves the hostname, not your laptop.
-- **Browser connection reuse** — an already-open keep-alive socket to the old IP will be reused even after a flush. Quit/relaunch the browser, or clear sockets (Chrome: `chrome://net-internals/#sockets`).
-- **Apps with their own DNS caches** — some long-running apps cache resolutions in-process.
-
 ## License
 
 GPL-3.0.
